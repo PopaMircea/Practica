@@ -2,9 +2,13 @@
 
 namespace Database\Seeders;
 
-
 use Illuminate\Database\Seeder;
 
+/**
+ * Class DatabaseSeeder
+ *
+ * @package Database\Seeders
+ */
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -16,10 +20,7 @@ class DatabaseSeeder extends Seeder
     {
         $this->call([
             AdminSeeder::class,
-            UserSeeder::class,
-            BoardsSeeder::class,
-            TasksSeeder::class
-            
+            TestSeeder::class
         ]);
     }
 }

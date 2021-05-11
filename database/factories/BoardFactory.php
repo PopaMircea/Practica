@@ -1,29 +1,35 @@
 <?php
 
 namespace Database\Factories;
+
+use App\Models\Board;
 use App\Models\User;
-use App\Models\Boards;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class BoardsFactory extends Factory
+/**
+ * Class BoardFactory
+ *
+ * @package Database\Factories
+ */
+class BoardFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = Boards::class;
+    protected $model = Board::class;
 
     /**
      * Define the model's default state.
      *
      * @return array
      */
-    public function definition()
+    public function definition(): array
     {
         return [
-            'name'=>$this->faker->sentence(),
-            'user_id'=> User::all()->random()->id,
+            'name' => $this->faker->name,
+            'user_id' => User::factory(),
         ];
     }
 }
