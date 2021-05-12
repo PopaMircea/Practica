@@ -34,6 +34,6 @@ class AdminMiddleware
             return $next($request);
         }
 
-        return redirect(route('dashboard'))->with('status', 'Sorry,only admins can acces this section!');
+        return redirect(route('dashboard'));
     }
 }
