@@ -21,7 +21,7 @@ class CreateBoardUsersTable extends Migration
             $table->unsignedBigInteger('board_id');
             $table->foreign('board_id')->references('id')->on('boards');
             $table->unsignedBigInteger('user_id');
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
             $table->unique(['board_id', 'user_id']);
         });

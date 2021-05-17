@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BoardController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\TaskController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -40,9 +41,15 @@ Route::middleware(['verified'])->group(function () {
         Route::post('/user/delete/{id}', [AdminController::class, 'deleteUser'])->name('users.delete');
     });
 
+    Route::middleware(['board'])->group(function(){
     Route::get('/boards', [BoardController::class, 'boards'])->name('boards.all');
     Route::post('/board/update/{id}', [BoardController::class, 'updateBoard'])->name('boards.update');
     Route::post('/board/delete/{id}', [BoardController::class, 'deleteBoard'])->name('boards.delete');
 
+    });
     Route::get('/board/{id}', [BoardController::class, 'board'])->name('board.view');
-});
+
+    Route::post('/task/update/{id}', [TaskController::class, 'updateTask'])->name('task.update');
+    Route::post('/task/delete/{id}', [TaskController::class, 'deleteTask'])->name('task.delete');
+    });
+

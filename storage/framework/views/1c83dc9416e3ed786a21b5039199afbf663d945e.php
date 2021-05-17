@@ -1,6 +1,4 @@
-@extends('layout.main')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <div class="container-fluid">
@@ -10,8 +8,8 @@
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('dashboard')}}">Dashboard</a></li>
-                        <li class="breadcrumb-item"><a href="{{route('boards.all')}}">Boards</a></li>
+                        <li class="breadcrumb-item"><a href="<?php echo e(route('dashboard')); ?>">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="<?php echo e(route('boards.all')); ?>">Boards</a></li>
                         <li class="breadcrumb-item active">Board</li>
                     </ol>
                 </div>
@@ -25,14 +23,14 @@
         <!-- Default box -->
         <div class="card">
             <div class="card-header">
-                <h3 class="card-title">{{$board->name}}</h3>
+                <h3 class="card-title"><?php echo e($board->name); ?></h3>
             </div>
 
             <div class="card-body">
                 <select class="custom-select rounded-0" id="changeBoard">
-                    @foreach($boards as $selectBoard)
-                        <option @if ($selectBoard->id === $board->id) selected="selected" @endif value="{{$selectBoard->id}}">{{$selectBoard->name}}</option>
-                    @endforeach
+                    <?php $__currentLoopData = $boards; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $selectBoard): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <option <?php if($selectBoard->id === $board->id): ?> selected="selected" <?php endif; ?> value="<?php echo e($selectBoard->id); ?>"><?php echo e($selectBoard->name); ?></option>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                 </select>
             </div>
         </div>
@@ -51,43 +49,43 @@
                 </thead>
                 <tbody>
                     
-                    @foreach ($tasks as $task )
+                    <?php $__currentLoopData = $tasks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $task): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                     <tr>
                         
-                        <td>{{ $task->name }}</td>
-                        <td>{{ $task->description}}</td>
-                        @if ($task->assignment != NULL)
-                        <td>{{ $task->user->name }}</td>
-                        @else <td>No user assigned</td>
-                        @endif
-                        @if ($task->status === 0)
+                        <td><?php echo e($task->name); ?></td>
+                        <td><?php echo e($task->description); ?></td>
+                        <?php if($task->assignment != NULL): ?>
+                        <td><?php echo e($task->user->name); ?></td>
+                        <?php else: ?> <td>No user assigned</td>
+                        <?php endif; ?>
+                        <?php if($task->status === 0): ?>
                         <td>Created</td>
-                        @elseif ($task->status === 1)
+                        <?php elseif($task->status === 1): ?>
                          <td>In Progress</td>
-                         @elseif ($task->status === 2)
+                         <?php elseif($task->status === 2): ?>
                          <td>Finished</td>
-                         @endif
-                         <td>{{ $task->created_at }}</td>
+                         <?php endif; ?>
+                         <td><?php echo e($task->created_at); ?></td>
                          <td>
                             <div class="btn-group">
                                 <button class="btn btn-xs btn-primary"
                                         type="button"
-                                        data-task="{{json_encode($task)}}"
+                                        data-task="<?php echo e(json_encode($task)); ?>"
                                         data-toggle="modal"
                                         data-target="#taskEditModal">
                                     <i class="fas fa-edit"></i></button>
-                                @if ($user->role === App\Models\User::ROLE_ADMIN || $board->user_id === $user->id)   
+                                <?php if($user->role === App\Models\User::ROLE_ADMIN || $board->user_id === $user->id): ?>   
                                 <button class="btn btn-xs btn-danger"
                                         type="button"
-                                        data-task="{{json_encode($task)}}"
+                                        data-task="<?php echo e(json_encode($task)); ?>"
                                         data-toggle="modal"
                                         data-target="#taskDeleteModal">
                                     <i class="fas fa-trash"></i></button>
-                                @endif    
+                                <?php endif; ?>    
                             </div>
                         </td>
                     </tr>
-                    @endforeach
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                    
                 </tbody>
             </table>
@@ -96,32 +94,32 @@
           <!-- /.card-body -->
           <div class="card-footer clearfix">
             <ul class="pagination pagination-sm m-0 float-right">
-                @if ($tasks->currentPage() > 1)
-                    <li class="page-item"><a class="page-link" href="{{$tasks->previousPageUrl()}}">&laquo;</a></li>
-                    <li class="page-item"><a class="page-link" href="{{$tasks->url(1)}}">1</a></li>
-                @endif
+                <?php if($tasks->currentPage() > 1): ?>
+                    <li class="page-item"><a class="page-link" href="<?php echo e($tasks->previousPageUrl()); ?>">&laquo;</a></li>
+                    <li class="page-item"><a class="page-link" href="<?php echo e($tasks->url(1)); ?>">1</a></li>
+                <?php endif; ?>
 
-                @if ($tasks->currentPage() > 3)
+                <?php if($tasks->currentPage() > 3): ?>
                     <li class="page-item"><span class="page-link page-active">...</span></li>
-                @endif
-                @if ($tasks->currentPage() >= 3)
-                    <li class="page-item"><a class="page-link" href="{{$tasks->url($tasks->currentPage() - 1)}}">{{$tasks->currentPage() - 1}}</a></li>
-                @endif
+                <?php endif; ?>
+                <?php if($tasks->currentPage() >= 3): ?>
+                    <li class="page-item"><a class="page-link" href="<?php echo e($tasks->url($tasks->currentPage() - 1)); ?>"><?php echo e($tasks->currentPage() - 1); ?></a></li>
+                <?php endif; ?>
 
-                <li class="page-item"><span class="page-link page-active">{{$tasks->currentPage()}}</span></li>
+                <li class="page-item"><span class="page-link page-active"><?php echo e($tasks->currentPage()); ?></span></li>
 
-                @if ($tasks->currentPage() <= $tasks->lastPage() - 2)
-                    <li class="page-item"><a class="page-link" href="{{$tasks->url($tasks->currentPage() + 1)}}">{{$tasks->currentPage() + 1}}</a></li>
-                @endif
+                <?php if($tasks->currentPage() <= $tasks->lastPage() - 2): ?>
+                    <li class="page-item"><a class="page-link" href="<?php echo e($tasks->url($tasks->currentPage() + 1)); ?>"><?php echo e($tasks->currentPage() + 1); ?></a></li>
+                <?php endif; ?>
 
-                @if ($tasks->currentPage() < $tasks->lastPage() - 2)
+                <?php if($tasks->currentPage() < $tasks->lastPage() - 2): ?>
                     <li class="page-item"><span class="page-link page-active">...</span></li>
-                @endif
+                <?php endif; ?>
 
-                @if ($tasks->currentPage() < $tasks->lastPage() )
-                    <li class="page-item"><a class="page-link" href="{{$tasks->url($tasks->lastPage())}}">{{$tasks->lastPage()}}</a></li>
-                    <li class="page-item"><a class="page-link" href="{{$tasks->nextPageUrl()}}">&raquo;</a></li>
-                @endif
+                <?php if($tasks->currentPage() < $tasks->lastPage() ): ?>
+                    <li class="page-item"><a class="page-link" href="<?php echo e($tasks->url($tasks->lastPage())); ?>"><?php echo e($tasks->lastPage()); ?></a></li>
+                    <li class="page-item"><a class="page-link" href="<?php echo e($tasks->nextPageUrl()); ?>">&raquo;</a></li>
+                <?php endif; ?>
             </ul>
         </div>
     </div>
@@ -149,18 +147,18 @@
                 <div class="form-group">
                     <label for="taskAssignment">Assignment</label>
                     <select class="form-control select2" id="taskAssignment" style="width: 100%">
-                        @foreach ($boardUser as $option )
-                            <option value="{{ $option->user_id }}">{{ $option->user->name }}</option>
-                        @endforeach
-                        <option value="{{ NULL }}"> Unassign user </option>
+                        <?php $__currentLoopData = $boardUser; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $option): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <option value="<?php echo e($option->user_id); ?>"><?php echo e($option->user->name); ?></option>
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                        <option value="<?php echo e(NULL); ?>"> Unassign user </option>
                     </select>
                 </div>
                 <div class="form-group">
                   <label for="taskStatus">Status</label>
                   <select class="custom-select rounded-0" id="taskStatus">
-                     <option value="{{ \App\Models\Task::STATUS_CREATED }}">Created</option>
-                     <option value="{{ \App\Models\Task::STATUS_IN_PROGRESS  }}">In progress</option>
-                     <option value="{{ \App\Models\Task::STATUS_DONE }}">Finished</option>    
+                     <option value="<?php echo e(\App\Models\Task::STATUS_CREATED); ?>">Created</option>
+                     <option value="<?php echo e(\App\Models\Task::STATUS_IN_PROGRESS); ?>">In progress</option>
+                     <option value="<?php echo e(\App\Models\Task::STATUS_DONE); ?>">Finished</option>    
                   </select>  
 
                 </div>
@@ -199,4 +197,5 @@
     </div>
     </section>
     <!-- /.content -->
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layout.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\Practica\resources\views/boards/view.blade.php ENDPATH**/ ?>

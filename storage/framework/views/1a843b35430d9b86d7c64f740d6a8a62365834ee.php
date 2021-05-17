@@ -1,6 +1,4 @@
-@extends('layout.main')
-
-@section('content')
+<?php $__env->startSection('content'); ?>
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <div class="container-fluid">
@@ -10,7 +8,7 @@
                 </div>
                 <div class="col-sm-6">
                     <ol class="breadcrumb float-sm-right">
-                        <li class="breadcrumb-item"><a href="{{route('dashboard')}}">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="<?php echo e(route('dashboard')); ?>">Dashboard</a></li>
                         <li class="breadcrumb-item active">Boards</li>
                     </ol>
                 </div>
@@ -35,45 +33,46 @@
                             <th>Name</th>
                             <th>User</th>
                             <th>Members</th> 
-                            @if ($user->role === App\Models\User::ROLE_ADMIN || $board->user_id === $user->id )
+                            <?php if($user->role === App\Models\User::ROLE_ADMIN || $board->user_id === $user->id ): ?>
                                 <th style="width: 40px">Actions</th>  
-                            @endif
+                            <?php endif; ?>
                             
                             
                             
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($boards as $board)
+                        <?php $__currentLoopData = $boards; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $board): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
                             <tr>
-                                <td>{{$board->id}}</td>
+                                <td><?php echo e($board->id); ?></td>
                                 <td>
-                                    <a href="{{route('board.view', ['id' => $board->id])}}" class="link">{{$board->name}}</a>
+                                    <a href="<?php echo e(route('board.view', ['id' => $board->id])); ?>" class="link"><?php echo e($board->name); ?></a>
                                 </td>
-                                <td>{{$board->user->name}}</td>
+                                <td><?php echo e($board->user->name); ?></td>
                                 <td>
-                                    {{count($board->boardUsers)}}
+                                    <?php echo e(count($board->boardUsers)); ?>
+
                                 </td>
-                               @if ($user->role === App\Models\User::ROLE_ADMIN || $board->user_id === $user->id)
+                               <?php if($user->role === App\Models\User::ROLE_ADMIN || $board->user_id === $user->id): ?>
                                 <td>
                                     <div class="btn-group">
                                         <button class="btn btn-xs btn-primary"
                                                 type="button"
-                                                data-board="{{json_encode($board)}}"
+                                                data-board="<?php echo e(json_encode($board)); ?>"
                                                 data-toggle="modal"
                                                 data-target="#boardEditModal">
                                             <i class="fas fa-edit"></i></button>
                                         <button class="btn btn-xs btn-danger"
                                                 type="button"
-                                                data-board="{{json_encode($board)}}"
+                                                data-board="<?php echo e(json_encode($board)); ?>"
                                                 data-toggle="modal"
                                                 data-target="#boardDeleteModal">
                                             <i class="fas fa-trash"></i></button>
                                     </div>
                                 </td>
-                                @endif
+                                <?php endif; ?>
                             </tr>
-                        @endforeach
+                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </tbody>
                 </table>
             </div>
@@ -81,32 +80,32 @@
             <!-- /.card-body -->
             <div class="card-footer clearfix">
                 <ul class="pagination pagination-sm m-0 float-right">
-                    @if ($boards->currentPage() > 1)
-                        <li class="page-item"><a class="page-link" href="{{$boards->previousPageUrl()}}">&laquo;</a></li>
-                        <li class="page-item"><a class="page-link" href="{{$boards->url(1)}}">1</a></li>
-                    @endif
+                    <?php if($boards->currentPage() > 1): ?>
+                        <li class="page-item"><a class="page-link" href="<?php echo e($boards->previousPageUrl()); ?>">&laquo;</a></li>
+                        <li class="page-item"><a class="page-link" href="<?php echo e($boards->url(1)); ?>">1</a></li>
+                    <?php endif; ?>
 
-                    @if ($boards->currentPage() > 3)
+                    <?php if($boards->currentPage() > 3): ?>
                         <li class="page-item"><span class="page-link page-active">...</span></li>
-                    @endif
-                    @if ($boards->currentPage() >= 3)
-                        <li class="page-item"><a class="page-link" href="{{$boards->url($boards->currentPage() - 1)}}">{{$boards->currentPage() - 1}}</a></li>
-                    @endif
+                    <?php endif; ?>
+                    <?php if($boards->currentPage() >= 3): ?>
+                        <li class="page-item"><a class="page-link" href="<?php echo e($boards->url($boards->currentPage() - 1)); ?>"><?php echo e($boards->currentPage() - 1); ?></a></li>
+                    <?php endif; ?>
 
-                    <li class="page-item"><span class="page-link page-active">{{$boards->currentPage()}}</span></li>
+                    <li class="page-item"><span class="page-link page-active"><?php echo e($boards->currentPage()); ?></span></li>
 
-                    @if ($boards->currentPage() <= $boards->lastPage() - 2)
-                        <li class="page-item"><a class="page-link" href="{{$boards->url($boards->currentPage() + 1)}}">{{$boards->currentPage() + 1}}</a></li>
-                    @endif
+                    <?php if($boards->currentPage() <= $boards->lastPage() - 2): ?>
+                        <li class="page-item"><a class="page-link" href="<?php echo e($boards->url($boards->currentPage() + 1)); ?>"><?php echo e($boards->currentPage() + 1); ?></a></li>
+                    <?php endif; ?>
 
-                    @if ($boards->currentPage() < $boards->lastPage() - 2)
+                    <?php if($boards->currentPage() < $boards->lastPage() - 2): ?>
                         <li class="page-item"><span class="page-link page-active">...</span></li>
-                    @endif
+                    <?php endif; ?>
 
-                    @if ($boards->currentPage() < $boards->lastPage() )
-                        <li class="page-item"><a class="page-link" href="{{$boards->url($boards->lastPage())}}">{{$boards->lastPage()}}</a></li>
-                        <li class="page-item"><a class="page-link" href="{{$boards->nextPageUrl()}}">&raquo;</a></li>
-                    @endif
+                    <?php if($boards->currentPage() < $boards->lastPage() ): ?>
+                        <li class="page-item"><a class="page-link" href="<?php echo e($boards->url($boards->lastPage())); ?>"><?php echo e($boards->lastPage()); ?></a></li>
+                        <li class="page-item"><a class="page-link" href="<?php echo e($boards->nextPageUrl()); ?>">&raquo;</a></li>
+                    <?php endif; ?>
                 </ul>
             </div>
         </div>
@@ -131,9 +130,9 @@
                         <div class="form-group">
                             <label for="boardAddMembers">Add Members</label>
                             <select  class="form-control select2" name="members[]" id="boardAddMembers" multiple="multiple" style="width: 100%">
-                               @foreach ($members as $member )
-                                   <option value="{{ $member->id }}"> {{ $member->name}}</option>
-                               @endforeach
+                               <?php $__currentLoopData = $members; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $member): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                   <option value="<?php echo e($member->id); ?>"> <?php echo e($member->name); ?></option>
+                               <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </select>
                         </div>
                     </div>
@@ -171,4 +170,5 @@
 
     </section>
     <!-- /.content -->
-@endsection
+<?php $__env->stopSection(); ?>
+<?php echo $__env->make('layout.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\Practica\resources\views/boards/index.blade.php ENDPATH**/ ?>
