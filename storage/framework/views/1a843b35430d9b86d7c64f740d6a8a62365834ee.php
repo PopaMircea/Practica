@@ -23,8 +23,18 @@
         <div class="card">
             <div class="card-header">
                 <h3 class="card-title">Boards list</h3>
+                <div class="col-sm-12">
+                            <button class="btn btn-sm btn-success float-right"
+                                type="button"
+                                data-board="<?php echo e(json_encode($board)); ?>"
+                                data-toggle="modal"
+                                data-target="#boardAddModal">
+                                Add board
+                            <i class="fas fa-plus"></i></button>
+                </div>
             </div>
-
+           
+           
             <div class="card-body">
                 <table class="table table-bordered">
                     <thead>
@@ -32,13 +42,8 @@
                             <th style="width: 10px">#</th>
                             <th>Name</th>
                             <th>User</th>
-                            <th>Members</th> 
-                            <?php if($user->role === App\Models\User::ROLE_ADMIN || $board->user_id === $user->id ): ?>
-                                <th style="width: 40px">Actions</th>  
-                            <?php endif; ?>
-                            
-                            
-                            
+                            <th>Members</th>
+                            <th style="width: 40px">Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -53,24 +58,24 @@
                                     <?php echo e(count($board->boardUsers)); ?>
 
                                 </td>
-                               <?php if($user->role === App\Models\User::ROLE_ADMIN || $board->user_id === $user->id): ?>
                                 <td>
-                                    <div class="btn-group">
-                                        <button class="btn btn-xs btn-primary"
-                                                type="button"
-                                                data-board="<?php echo e(json_encode($board)); ?>"
-                                                data-toggle="modal"
-                                                data-target="#boardEditModal">
-                                            <i class="fas fa-edit"></i></button>
-                                        <button class="btn btn-xs btn-danger"
-                                                type="button"
-                                                data-board="<?php echo e(json_encode($board)); ?>"
-                                                data-toggle="modal"
-                                                data-target="#boardDeleteModal">
-                                            <i class="fas fa-trash"></i></button>
-                                    </div>
+                                    <?php if($board->user->id === \Illuminate\Support\Facades\Auth::user()->id || \Illuminate\Support\Facades\Auth::user()->role === \App\Models\User::ROLE_ADMIN): ?>
+                                        <div class="btn-group">
+                                            <button class="btn btn-sm btn-primary"
+                                                    type="button"
+                                                    data-board="<?php echo e(json_encode($board)); ?>"
+                                                    data-toggle="modal"
+                                                    data-target="#boardEditModal">
+                                                <i class="fas fa-edit"></i></button>
+                                            <button class="btn btn-sm btn-danger"
+                                                    type="button"
+                                                    data-board="<?php echo e(json_encode($board)); ?>"
+                                                    data-toggle="modal"
+                                                    data-target="#boardDeleteModal">
+                                                <i class="fas fa-trash"></i></button>
+                                        </div>
+                                    <?php endif; ?>
                                 </td>
-                                <?php endif; ?>
                             </tr>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                     </tbody>
@@ -110,6 +115,32 @@
             </div>
         </div>
         <!-- /.card -->
+        <div class="modal fade" id="boardAddModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Add board</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-danger hidden" id="boardAddAlert"></div>
+                        <div class="form-group">
+                            <label for="boardAddName">Name</label>
+                            <input type="text" class="form-control" id="boardAddName" placeholder="Name">
+                        </div>
+                        <div class="form-group">
+                            <input type="hidden" class="form-control" id="boardUserId" value="<?php echo e($user->id); ?>" placeholder="Name">
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="boardAddButton">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <div class="modal fade" id="boardEditModal">
             <div class="modal-dialog">
@@ -124,15 +155,15 @@
                         <div class="alert alert-danger hidden" id="boardEditAlert"></div>
                         <input type="hidden" id="boardEditId" value="" />
                         <div class="form-group">
-                            <label for="boardName">Board name</label>
-                            <input type="text" id="boardName" />
+                            <label for="boardEditName">Name</label>
+                            <input type="text" class="form-control" id="boardEditName" placeholder="Name">
                         </div>
                         <div class="form-group">
-                            <label for="boardAddMembers">Add Members</label>
-                            <select  class="form-control select2" name="members[]" id="boardAddMembers" multiple="multiple" style="width: 100%">
-                               <?php $__currentLoopData = $members; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $member): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                   <option value="<?php echo e($member->id); ?>"> <?php echo e($member->name); ?></option>
-                               <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            <label for="boardEditUsers">Board Users</label>
+                            <select class="select2bs4" multiple="multiple" data-placeholder="Select board users" id="boardEditUsers" style="width: 100%;">
+                                <?php $__currentLoopData = $userList; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $user): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option value="<?php echo e($user['id']); ?>"><?php echo e($user['name']); ?></option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
                             </select>
                         </div>
                     </div>
@@ -171,4 +202,5 @@
     </section>
     <!-- /.content -->
 <?php $__env->stopSection(); ?>
+
 <?php echo $__env->make('layout.main', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH C:\xampp\htdocs\Practica\resources\views/boards/index.blade.php ENDPATH**/ ?>

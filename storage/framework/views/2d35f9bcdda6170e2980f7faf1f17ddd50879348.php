@@ -3,11 +3,11 @@
         <!-- Site wrapper -->
         <div class="wrapper">
 
-            <?php echo $__env->make('layout.navbar', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+        <?php echo $__env->make('layout.navbar', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
-            <?php echo $__env->make('layout.sidebar', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
+        <?php echo $__env->make('layout.sidebar', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?>
 
-            <!-- Content Wrapper. Contains page content -->
+        <!-- Content Wrapper. Contains page content -->
             <div class="content-wrapper">
                 <?php echo $__env->yieldContent('content'); ?>
             </div>

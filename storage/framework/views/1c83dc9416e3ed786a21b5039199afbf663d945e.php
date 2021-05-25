@@ -35,166 +35,222 @@
             </div>
         </div>
         <!-- /.card -->
-        <div class="card-body">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th> Name </th>
-                        <th>Description</th>
-                        <th>Assignment </th>
-                        <th>Status</th>
-                        <th>Date of creation</th>
-                        <th style="width: 40px">Actions</th>  
-                     </tr>
-                </thead>
-                <tbody>
-                    
-                    <?php $__currentLoopData = $tasks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $task): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                    <tr>
-                        
-                        <td><?php echo e($task->name); ?></td>
-                        <td><?php echo e($task->description); ?></td>
-                        <?php if($task->assignment != NULL): ?>
-                        <td><?php echo e($task->user->name); ?></td>
-                        <?php else: ?> <td>No user assigned</td>
-                        <?php endif; ?>
-                        <?php if($task->status === 0): ?>
-                        <td>Created</td>
-                        <?php elseif($task->status === 1): ?>
-                         <td>In Progress</td>
-                         <?php elseif($task->status === 2): ?>
-                         <td>Finished</td>
-                         <?php endif; ?>
-                         <td><?php echo e($task->created_at); ?></td>
-                         <td>
-                            <div class="btn-group">
-                                <button class="btn btn-xs btn-primary"
-                                        type="button"
-                                        data-task="<?php echo e(json_encode($task)); ?>"
-                                        data-toggle="modal"
-                                        data-target="#taskEditModal">
-                                    <i class="fas fa-edit"></i></button>
-                                <?php if($user->role === App\Models\User::ROLE_ADMIN || $board->user_id === $user->id): ?>   
-                                <button class="btn btn-xs btn-danger"
-                                        type="button"
-                                        data-task="<?php echo e(json_encode($task)); ?>"
-                                        data-toggle="modal"
-                                        data-target="#taskDeleteModal">
-                                    <i class="fas fa-trash"></i></button>
-                                <?php endif; ?>    
-                            </div>
-                        </td>
-                    </tr>
-                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                   
-                </tbody>
-            </table>
+
+        <!-- Default box -->
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Task list</h3>
+                <div class="col-sm-12">
+                    <button class="btn btn-sm btn-success float-right"
+                        type="button"
+                        data-task="<?php echo e(json_encode($task)); ?>"
+                        data-toggle="modal"
+                        data-target="#taskAddModal">
+                        Add task
+                    <i class="fas fa-plus"></i></button>
         </div>
+            </div>
 
-          <!-- /.card-body -->
-          <div class="card-footer clearfix">
-            <ul class="pagination pagination-sm m-0 float-right">
-                <?php if($tasks->currentPage() > 1): ?>
-                    <li class="page-item"><a class="page-link" href="<?php echo e($tasks->previousPageUrl()); ?>">&laquo;</a></li>
-                    <li class="page-item"><a class="page-link" href="<?php echo e($tasks->url(1)); ?>">1</a></li>
-                <?php endif; ?>
-
-                <?php if($tasks->currentPage() > 3): ?>
-                    <li class="page-item"><span class="page-link page-active">...</span></li>
-                <?php endif; ?>
-                <?php if($tasks->currentPage() >= 3): ?>
-                    <li class="page-item"><a class="page-link" href="<?php echo e($tasks->url($tasks->currentPage() - 1)); ?>"><?php echo e($tasks->currentPage() - 1); ?></a></li>
-                <?php endif; ?>
-
-                <li class="page-item"><span class="page-link page-active"><?php echo e($tasks->currentPage()); ?></span></li>
-
-                <?php if($tasks->currentPage() <= $tasks->lastPage() - 2): ?>
-                    <li class="page-item"><a class="page-link" href="<?php echo e($tasks->url($tasks->currentPage() + 1)); ?>"><?php echo e($tasks->currentPage() + 1); ?></a></li>
-                <?php endif; ?>
-
-                <?php if($tasks->currentPage() < $tasks->lastPage() - 2): ?>
-                    <li class="page-item"><span class="page-link page-active">...</span></li>
-                <?php endif; ?>
-
-                <?php if($tasks->currentPage() < $tasks->lastPage() ): ?>
-                    <li class="page-item"><a class="page-link" href="<?php echo e($tasks->url($tasks->lastPage())); ?>"><?php echo e($tasks->lastPage()); ?></a></li>
-                    <li class="page-item"><a class="page-link" href="<?php echo e($tasks->nextPageUrl()); ?>">&raquo;</a></li>
-                <?php endif; ?>
-            </ul>
-        </div>
-    </div>
-    <!-- /.card -->
-    <div class="modal fade" id="taskEditModal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Edit task</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                <div class="alert alert-danger hidden" id="taskEditAlert"></div>
-                <input type="hidden" id="taskId" value="" />  
-                <div class="form-group">
-                <label for="taskName">Name:</label>   
-                <input type="text" id="taskName" value="" /> 
-                </div>
-                <div class="form-group">
-                <label for="taskDescription">Description:</label>  
-                <input style="width:100%;" type="text" id="taskDescription" />
-                </div>
-                <div class="form-group">
-                    <label for="taskAssignment">Assignment</label>
-                    <select class="form-control select2" id="taskAssignment" style="width: 100%">
-                        <?php $__currentLoopData = $boardUser; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $option): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                            <option value="<?php echo e($option->user_id); ?>"><?php echo e($option->user->name); ?></option>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Description</th>
+                            <th>Assignment</th>
+                            <th>Status</th>
+                            <th>Create Date</th>
+                            <th style="width: 40px">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php $__currentLoopData = $tasks; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $task): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <tr>
+                                <td><?php echo e($task->name); ?></td>
+                                <td><?php echo e($task->description); ?></td>
+                                <td><?php echo e($task->assignment ? $task->user->name : '-'); ?></td>
+                                <td> <?php if($task->status === \App\Models\Task::STATUS_CREATED): ?>
+                                        <span class="badge bg-warning">Created</span>
+                                    <?php elseif($task->status === \App\Models\Task::STATUS_IN_PROGRESS): ?>
+                                        <span class="badge bg-primary">In progress</span>
+                                    <?php else: ?>
+                                        <span class="badge bg-success">Done</span>
+                                    <?php endif; ?>
+                                </td>
+                                <td><?php echo e($task->created_at->format('j M Y H:i:s')); ?></td>
+                                <td>
+                                    <div class="btn-group">
+                                        <button class="btn btn-sm btn-primary"
+                                                type="button"
+                                                data-task="<?php echo e(json_encode($task)); ?>"
+                                                data-toggle="modal"
+                                                data-target="#taskEditModal">
+                                            <i class="fas fa-edit"></i></button>
+                                        <?php if($board->user->id === \Illuminate\Support\Facades\Auth::user()->id || \Illuminate\Support\Facades\Auth::user()->role === \App\Models\User::ROLE_ADMIN): ?>
+                                            <button class="btn btn-sm btn-danger"
+                                                    type="button"
+                                                    data-task="<?php echo e(json_encode($task)); ?>"
+                                                    data-toggle="modal"
+                                                    data-target="#taskDeleteModal">
+                                                <i class="fas fa-trash"></i></button>
+                                        <?php endif; ?>
+                                    </div>
+                                </td>
+                            </tr>
                         <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                        <option value="<?php echo e(NULL); ?>"> Unassign user </option>
-                    </select>
-                </div>
-                <div class="form-group">
-                  <label for="taskStatus">Status</label>
-                  <select class="custom-select rounded-0" id="taskStatus">
-                     <option value="<?php echo e(\App\Models\Task::STATUS_CREATED); ?>">Created</option>
-                     <option value="<?php echo e(\App\Models\Task::STATUS_IN_PROGRESS); ?>">In progress</option>
-                     <option value="<?php echo e(\App\Models\Task::STATUS_DONE); ?>">Finished</option>    
-                  </select>  
+                    </tbody>
+                </table>
+            </div>
 
-                </div>
+            <!-- /.card-body -->
+            <div class="card-footer clearfix">
+                <ul class="pagination pagination-sm m-0 float-right">
+                    <?php if($tasks->currentPage() > 1): ?>
+                        <li class="page-item"><a class="page-link" href="<?php echo e($tasks->previousPageUrl()); ?>">&laquo;</a></li>
+                        <li class="page-item"><a class="page-link" href="<?php echo e($tasks->url(1)); ?>">1</a></li>
+                    <?php endif; ?>
 
-                </div>
-                <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" id="taskEditButton">Save changes</button>
+                    <?php if($tasks->currentPage() > 3): ?>
+                        <li class="page-item"><span class="page-link page-active">...</span></li>
+                    <?php endif; ?>
+                    <?php if($tasks->currentPage() >= 3): ?>
+                        <li class="page-item"><a class="page-link" href="<?php echo e($tasks->url($tasks->currentPage() - 1)); ?>"><?php echo e($tasks->currentPage() - 1); ?></a></li>
+                    <?php endif; ?>
+
+                    <li class="page-item"><span class="page-link page-active"><?php echo e($tasks->currentPage()); ?></span></li>
+
+                    <?php if($tasks->currentPage() <= $tasks->lastPage() - 2): ?>
+                        <li class="page-item"><a class="page-link" href="<?php echo e($tasks->url($tasks->currentPage() + 1)); ?>"><?php echo e($tasks->currentPage() + 1); ?></a></li>
+                    <?php endif; ?>
+
+                    <?php if($tasks->currentPage() < $tasks->lastPage() - 2): ?>
+                        <li class="page-item"><span class="page-link page-active">...</span></li>
+                    <?php endif; ?>
+
+                    <?php if($tasks->currentPage() < $tasks->lastPage() ): ?>
+                        <li class="page-item"><a class="page-link" href="<?php echo e($tasks->url($tasks->lastPage())); ?>"><?php echo e($tasks->lastPage()); ?></a></li>
+                        <li class="page-item"><a class="page-link" href="<?php echo e($tasks->nextPageUrl()); ?>">&raquo;</a></li>
+                    <?php endif; ?>
+                </ul>
+            </div>
+        </div>
+        <!-- /.card -->
+        <div class="modal fade" id="taskAddModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Edit task</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <input type="hidden" class="form-control" id="taskBoardId" placeholder="Name" value="<?php echo e($board->id); ?>">
+                        </div>
+                        <div class="form-group">
+                            <label for="taskAddName">Name</label>
+                            <input type="text" class="form-control" id="taskAddName" placeholder="Name">
+                        </div>
+                        <div class="form-group">
+                            <label for="taskAddDescription">Description</label>
+                            <textarea class="form-control" id="taskAddDescription" placeholder="Description"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="taskAddAssignment">Assignment</label>
+                            <select class="custom-select rounded-0" id="taskAddAssignment">
+                                <option value="">Unassigned</option>
+                                <?php $__currentLoopData = $boardUsers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $boardUser): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option value="<?php echo e($boardUser->user_id); ?>"><?php echo e($boardUser->user->name); ?></option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="taskAddStatus">Status</label>
+                            <select class="custom-select rounded-0" id="taskAddStatus">
+                                <option value="0">Created</option>
+                                <option value="1">In progress</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="taskAddButton">Save changes</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="modal fade" id="taskDeleteModal">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title">Delete task</h4>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="alert alert-danger hidden" id="taskDeleteAlert"></div>
-                    <input type="hidden" id="taskDeleteId" value="" />
-                    <p>Are you sure you want to delete: <span id="taskDeleteName"></span>?</p>
-                </div>
-                <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-danger" id="taskDeleteButton">Delete</button>
+        <div class="modal fade" id="taskEditModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Edit task</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-danger hidden" id="taskEditAlert"></div>
+                        <input type="hidden" id="taskEditId" value="" />
+                        <div class="form-group">
+                            <label for="taskEditName">Name</label>
+                            <input type="text" class="form-control" id="taskEditName" placeholder="Name">
+                        </div>
+                        <div class="form-group">
+                            <label for="taskEditDescription">Description</label>
+                            <textarea class="form-control" id="taskEditDescription" placeholder="Description"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="taskEditAssignment">Assignment</label>
+                            <select class="custom-select rounded-0" id="taskEditAssignment">
+                                <option value="">Unassigned</option>
+                                <?php $__currentLoopData = $boardUsers; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $boardUser): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    <option value="<?php echo e($boardUser->user_id); ?>"><?php echo e($boardUser->user->name); ?></option>
+                                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="taskEditStatus">Status</label>
+                            <select class="custom-select rounded-0" id="taskEditStatus">
+                                <option value="0">Created</option>
+                                <option value="1">In progress</option>
+                                <option value="2">Done</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" id="taskEditButton">Save changes</button>
+                    </div>
                 </div>
             </div>
-            <!-- /.modal-content -->
         </div>
-        <!-- /.modal-dialog -->
-    </div>
+
+        <div class="modal fade" id="taskDeleteModal">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title">Delete task</h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-danger hidden" id="taskDeleteAlert"></div>
+                        <input type="hidden" id="taskDeleteId" value="" />
+                        <p>Are you sure you want to delete: <span id="taskDeleteName"></span>?</p>
+                    </div>
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-danger" id="taskDeleteButton">Delete</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+
     </section>
     <!-- /.content -->
 <?php $__env->stopSection(); ?>

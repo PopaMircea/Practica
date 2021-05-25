@@ -29,6 +29,7 @@ class AdminMiddleware
     {
         /** @var User $user */
         $user = Auth::user();
+
         if ($user->role === User::ROLE_ADMIN) {
             return $next($request);
         }

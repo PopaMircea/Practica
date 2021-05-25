@@ -20,26 +20,67 @@
 
         <!-- Default box -->
         <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Title</h3>
-
-                <div class="card-tools">
-                    <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                        <i class="fas fa-minus"></i>
-                    </button>
-                    <button type="button" class="btn btn-tool" data-card-widget="remove" title="Remove">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-            </div>
             <div class="card-body">
-                Start creating your amazing application!
+
+
+                <div class="row">
+                    <div class="col-lg-4 col-6">
+                        <!-- small box -->
+                        <div class="small-box bg-info">
+                            <div class="inner">
+                                <h3><?php echo e(count($users)); ?></h3>
+
+                                <p>Users registered</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <?php if($user->role === App\Models\User::ROLE_ADMIN): ?>
+                            <a href="<?php echo e(route('users.all')); ?>" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                            <?php else: ?>
+                            <div class="small-box-footer">No info available <i class="fas fa-ban" style="color: red"></i></div>
+                            <?php endif; ?>    
+                        </div>
+                    </div>
+                    <!-- ./col -->
+                    <div class="col-lg-4 col-6">
+                        <!-- small box -->
+                        <div class="small-box bg-success">
+                            <div class="inner">
+                                <h3><?php echo e(count($boards)); ?></h3>
+                                
+                                <?php if($user->role === App\Models\User::ROLE_ADMIN): ?>
+                                <p>Boards</p>
+                                <?php else: ?>
+                                <p>Boards where you have acces</p>
+                                <?php endif; ?>
+                            </div>
+                            <div class="icon">
+                                <i class="fas fa-table"></i>
+                            </div>
+                            <a href="<?php echo e(route('boards.all')); ?>" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+                        </div>
+                    </div>
+                    <!-- ./col -->
+                    <div class="col-lg-4 col-6">
+                        <!-- small box -->
+                        <div class="small-box bg-warning">
+                            <div class="inner">
+                                <h3><?php echo e(count($taskAssigned)); ?> / <?php echo e(count($taskAll)); ?> </h3>
+
+                                <p>Assigned tasks / Total tasks</p>
+                            </div>
+                            <div class="icon">
+                                <i class="fas fa-tasks"></i>
+                            </div>
+                            <div class="small-box-footer">No info available <i class="fas fa-ban" style="color: red"></i></div>
+                        </div>
+                    </div>
+                
+                </div>
+
+
             </div>
-            <!-- /.card-body -->
-            <div class="card-footer">
-                Footer
-            </div>
-            <!-- /.card-footer-->
         </div>
         <!-- /.card -->
 

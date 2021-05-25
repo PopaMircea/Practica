@@ -109,18 +109,13 @@ class AdminController extends Controller
      * @return JsonResponse
      */
     public function deleteUser(Request $request, $id): JsonResponse
-    {   
+    {
         $user = User::find($id);
 
         $error = '';
         $success = '';
 
         if ($user) {
-            $user->boardUsers()->delete();
-            $user->createdBoards()->delete();
-            $user->boards()->delete();
-            $user->tasks()->delete();
-            $user->createdBoardsTasks()->delete();
             $user->delete();
 
             $success = 'User deleted';

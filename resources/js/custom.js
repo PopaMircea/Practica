@@ -1,7 +1,3 @@
-const { data } = require("jquery");
-
-
-
 //CUSTOM JS
 $('#userEditModal').on('shown.bs.modal', function(event) {
     let button = $(event.relatedTarget); // Button that triggered the modal
@@ -42,8 +38,16 @@ $('#boardEditModal').on('shown.bs.modal', function(event) {
     let modal = $(this);
 
     modal.find('#boardEditId').val(board.id);
-    modal.find('#boardName').val(board.name);
-    
+    modal.find('#boardEditName').val(board.name);
+
+    let usersSelected = [];
+
+    board.board_users.forEach(function(boardUser) {
+        usersSelected.push(boardUser.user_id);
+    });
+
+    modal.find('#boardEditUsers').val(usersSelected);
+    modal.find('#boardEditUsers').trigger('change');
 });
 
 $('#boardDeleteModal').on('shown.bs.modal', function(event) {
@@ -56,17 +60,17 @@ $('#boardDeleteModal').on('shown.bs.modal', function(event) {
     modal.find('#boardDeleteName').text(board.name);
 });
 
-
-$('#taskEditModal').on('shown.bs.modal', function(event){
-    let button = $(event.relatedTarget);
+$('#taskEditModal').on('shown.bs.modal', function(event) {
+    let button = $(event.relatedTarget); // Button that triggered the modal
     let task = button.data('task');
 
     let modal = $(this);
 
-    modal.find('#taskId').val(task.id);
-    modal.find('#taskName').val(task.name);
-    modal.find('#taskDescription').val(task.description);
-    modal.find('#taskStatus').val(task.status);
+    modal.find('#taskEditId').val(task.id);
+    modal.find('#taskEditName').val(task.name);
+    modal.find('#taskEditDescription').text(task.description);
+    modal.find('#taskEditAssignment').val(task.assignment ? task.assignment : '');
+    modal.find('#taskEditStatus').val(task.status);
 });
 
 $('#taskDeleteModal').on('shown.bs.modal', function(event) {
@@ -79,14 +83,7 @@ $('#taskDeleteModal').on('shown.bs.modal', function(event) {
     modal.find('#taskDeleteName').text(task.name);
 });
 
-/**
- * Update user using ajax
- */
 $(document).ready(function() {
-    
-    $('#boardAddMembers').select2();
-    $('#taskAssignment').select2();
-
     $('#userEditButtonAjax').on('click', function() {
         $('#userEditAlert').addClass('hidden');
 
@@ -122,20 +119,46 @@ $(document).ready(function() {
         });
     });
 
+    $('#changeBoard').on('change', function() {
+        let id = $(this).val();
+
+        window.location.href = '/board/' + id;
+    });
+
+    $('#boardAddButton').on('click', function() {
+        let id = $('#boardUserId').val();
+        let name = $('#boardAddName').val();
+
+        $.ajax({
+            method: 'POST',
+            url: '/board/create/',
+            data: {id,name}
+        }).done(function() {
+        window.location.reload();
+            
+        });
+    });
+
+
+    $('#boardEditUsers').select2();
 
     $('#boardEditButton').on('click', function() {
         $('#boardEditAlert').addClass('hidden');
 
         let id = $('#boardEditId').val();
-        let name = $('#boardName').val();
-        let members = $('#boardAddMembers').val();
+        let name = $('#boardEditName').val();
+        let boardUsersData = $('#boardEditUsers').select2('data');
+
+        let boardUsers = [];
+
+        boardUsersData.forEach(function(item) {
+            boardUsers.push(item.id);
+        });
+
         $.ajax({
             method: 'POST',
             url: '/board/update/' + id,
-            data:  
-            {name: name,
-             members: members       
-            }
+            data: {name, boardUsers}
         }).done(function(response) {
             if (response.error !== '') {
                 $('#boardEditAlert').text(response.error).removeClass('hidden');
@@ -161,30 +184,37 @@ $(document).ready(function() {
         });
     });
 
-    $('#changeBoard').on('change', function() {
-        let id = $(this).val();
+    $('#taskAddButton').on('click', function() {
 
-        window.location.href = '/board/' + id;
+        let id = $('#taskBoardId').val();
+        let name = $('#taskAddName').val();
+        let description = $('#taskAddDescription').val();
+        let assignment = $('#taskAddAssignment').val();
+        let status = $('#taskAddStatus').val();
+
+        $.ajax({
+            method: 'POST',
+            url: '/task/create/',
+            data: {id,name, description, assignment, status}
+        }).done(function() {
+            window.location.reload();
+            
+        });
     });
-
 
     $('#taskEditButton').on('click', function() {
         $('#taskEditAlert').addClass('hidden');
 
-        let id = $('#taskId').val();
-        let name = $('#taskName').val();
-        let description = $('#taskDescription').val();
-        let assignment = $('#taskAssignment').val();
-        let status = $('#taskStatus').val();
+        let id = $('#taskEditId').val();
+        let name = $('#taskEditName').val();
+        let description = $('#taskEditDescription').val();
+        let assignment = $('#taskEditAssignment').val();
+        let status = $('#taskEditStatus').val();
+
         $.ajax({
             method: 'POST',
             url: '/task/update/' + id,
-            data: {
-                name: name,
-                description: description,
-                assignment: assignment,
-                status: status
-                }
+            data: {name, description, assignment, status}
         }).done(function(response) {
             if (response.error !== '') {
                 $('#taskEditAlert').text(response.error).removeClass('hidden');
@@ -209,4 +239,5 @@ $(document).ready(function() {
             }
         });
     });
+
 });
